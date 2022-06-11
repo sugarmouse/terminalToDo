@@ -1,4 +1,5 @@
 const program = require('commander')
+const api = require('./index.js')
 
 /**
  * 添加选项
@@ -14,7 +15,7 @@ program
   .description('add a task')
   .action((...args) => {
     const words = args.slice(0, -1).join(' ')
-    console.log(words)
+    api.add(words)
   })
 
 program
