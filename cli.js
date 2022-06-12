@@ -1,31 +1,29 @@
 const program = require('commander')
 const api = require('./index.js')
 
-/**
- * 添加选项
-*/
+/* add options */
 program
   .option('-x, --xxxx', 'what the x')
 
-/**
- * 添加子命令
-*/
+/* add sub commander */
 program
   .command('add')
   .description('add a task')
   .action((...args) => {
     const words = args.slice(0, -1).join(' ')
-    api.add(words)
+    api.add(words).then(() => console.log('添加成功'), () => console.log('添加失败'))
   })
 
 program
   .command('clear')
   .description('clear all tasks')
   .action((...args) => {
-    const realArgs = args.slice(0, -1)
-    console.log(realArgs)
+    api.clear().then(() => console.log('任务已清空'), () => console.log('清空任务失败'))
   })
 
 program.parse(process.argv)
 
 
+if (process.argv.length === 2) {
+  api.showAll()
+}
