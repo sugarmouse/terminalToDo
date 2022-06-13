@@ -15,7 +15,13 @@ module.exports.clear = async () => {
 
 module.exports.showAll = async () => {
   const list = await db.read()
+  showTasks(list)
+}
 
+
+
+
+function showTasks(list) {
   inquirer
     .prompt({
       type: 'list',
@@ -29,63 +35,74 @@ module.exports.showAll = async () => {
       const index = parseInt(answer.index)
       if (index >= 0) {
         //选中了某个任务
-        inquirer
-          .prompt({
-            type: 'list',
-            name: 'action',
-            message: '选择你需要进行的操作：',
-            choices: [
-              { name: '退出', value: 'quit' },
-              { name: '已完成', value: 'markDone' },
-              { name: '未完成', value: 'markTodo' },
-              { name: '删除', value: 'delete' },
-              { name: '修改任务', value: 'modify' },
-            ]
-          })
-          .then(answer2 => {
-            switch (answer2.action) {
-              case 'quit':
-                break
-              case 'markDone':
-                list[index].done = true
-                db.write(list)
-                break
-              case 'markTodo':
-                list[index].done = false
-                db.write(list)
-                break
-              case 'delete':
-                list.splice(index, 1)
-                db.write(list)
-                break
-              case 'modify':
-                inquirer.prompt({
-                  type: 'input',
-                  name: 'title',
-                  message: "新的任务标题",
-                  default: list[index].title
-                }).then((task) => {
-                  if (task.title.length === 0) return
-                  list[index].title = task.title
-                  db.write(list)
-                })
-                break
-
-            }
-          })
+        handleSelectedTask(list, index)
       } else if (index === -2) {
         //创建新的任务
-        inquirer.prompt({
-          type: 'input',
-          name: 'title',
-          message: "新的任务标题",
-        }).then((task) => {
-          if (task.title.length === 0) return
-          list.push({ title: task.title, done: false })
-          db.write(list)
-        })
-
+        askForNewTask(list)
       }
     })
+}
 
+function handleSelectedTask(list, index) {
+  const actions = {
+    markDone: markSelectedTaskDone,
+    markTodo: markSelectedTaskTodo,
+    delete: deleteSelectedTask,
+    modify: modifyTask
+  }
+
+  inquirer
+    .prompt({
+      type: 'list',
+      name: 'action',
+      message: '选择你需要进行的操作：',
+      choices: [
+        { name: '退出', value: 'quit' },
+        { name: '已完成', value: 'markDone' },
+        { name: '未完成', value: 'markTodo' },
+        { name: '删除', value: 'delete' },
+        { name: '修改任务', value: 'modify' },
+      ]
+    })
+    .then(answer2 => actions[answer2.action](list, index))
+}
+
+function markSelectedTaskTodo(list, index) {
+  list[index].done = false
+  db.write(list)
+}
+
+function markSelectedTaskDone(list, index) {
+  list[index].done = true
+  db.write(list)
+}
+
+function deleteSelectedTask(list, index) {
+  list.splice(index, 1)
+  db.write(list)
+}
+
+function modifyTask(list, index) {
+  inquirer.prompt({
+    type: 'input',
+    name: 'title',
+    message: "新的任务标题",
+    default: list[index].title
+  }).then((task) => {
+    if (task.title.length === 0) return
+    list[index].title = task.title
+    db.write(list)
+  })
+}
+
+function askForNewTask(list) {
+  inquirer.prompt({
+    type: 'input',
+    name: 'title',
+    message: "新的任务标题",
+  }).then((task) => {
+    if (task.title.length === 0) return
+    list.push({ title: task.title, done: false })
+    db.write(list)
+  })
 }

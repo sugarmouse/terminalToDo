@@ -5,7 +5,7 @@ const api = require('./index.js')
 
 /* add options */
 program
-  .option('-x, --xxxx', 'what the x')
+  .option('')
 
 /* add sub commander */
 program
