@@ -1,3 +1,5 @@
+/* terminalTODO 的命令描述 */
+
 const program = require('commander')
 const api = require('./index.js')
 

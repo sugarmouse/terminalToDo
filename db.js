@@ -1,3 +1,4 @@
+/* 对系统文件的操作进行封装导出 */
 const default_home_dir = require('os').homedir()
 const fs = require('fs')
 const path = require('path')
