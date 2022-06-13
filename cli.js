@@ -1,11 +1,13 @@
+#!/usr/bin/env node
 /* terminalTODO 的命令描述 */
 
 const program = require('commander')
 const api = require('./index.js')
+const pkg = require('./package.json')
 
 /* add options */
 program
-  .option('')
+  .version(pkg.version)
 
 /* add sub commander */
 program

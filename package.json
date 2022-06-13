@@ -1,5 +1,13 @@
 {
-  "name": "terminal-to-do",
+  "name": "todointerminal",
+  "bin": {
+    "today":"cli.js"
+  },
+  "files": [
+    "cli.js",
+    "db.js",
+    "index.js"
+  ],
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
